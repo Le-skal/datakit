@@ -1,0 +1,17 @@
+# OS generated files
+.DS_Store
+
+# iles related to analysis
+.Rhistory
+
+# Potential data files
+*.csv
+*.sav
+*.feather
+
+# Model files
+*.keras
+
+# Python files
+*.pyc
+*__pycache__/
