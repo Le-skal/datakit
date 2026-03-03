@@ -31,6 +31,16 @@ Goal: OOP final project — dataset hierarchy, BatchLoader, preprocessing pipeli
 
 ### TODO
 - `report.md` — design decisions, workload split, usage documentation
+- Sphinx HTML docs — run on a good PC for +0.5 bonus points
+
+---
+
+## Todo list
+
+- [ ] **Sphinx** — generate HTML docs from existing docstrings (+0.5 bonus). Do on a good PC.
+- [ ] **report.md** — write design decisions + workload split. Leave result placeholders until Sphinx/main.py output is available.
+- [ ] **Generic indications checkboxes** — tick encapsulation, type checks, docstrings in README once report is written.
+- [ ] **Commit & push** after each of the above.
 
 ---
 

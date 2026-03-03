@@ -226,20 +226,13 @@ Notice that, for images and audio, showing means actually plotting some sample i
 
 Remind to always make use of the OOP concepts explained in the course:
 
-- [ ] Always implement encapsulation accordingly. All the attributes should be private, and the user should be able to access them only through getters and setters. The usage of the `@property` decorator is preferrable. Motivate any choice of public methods and attributes in the report.
+- [x] Always implement encapsulation accordingly. All the attributes should be private, and the user should be able to access them only through getters and setters. The usage of the `@property` decorator is preferrable. Motivate any choice of public methods and attributes in the report.
   - Remember type hints. Use the pipe operator `|` to concatenate multiple types. For collections, write inside brackets the expected type of elements (e.g., `List[int]`).
   - Also, don't forget about the return types (even when `None`).
-- [ ] Make use of type checks. Code performing type checks should be better implemented as a private method, especially if repeated throughout the class.
+- [x] Make use of type checks. Code performing type checks should be better implemented as a private method, especially if repeated throughout the class.
   - If you repeat code throughout different classes, you can either create an external class handling these tasks, or, if you have small utility functions (e.g., check int, convert something into something else) you can create a `util.py` script and put the functions there (outside the objects is fine as well); you may later access the functions as `from util import <utility_function>`
-- [ ] Make use of docstrings. Providing a documentation as HTML files (converted from the docstrings using software such as [sphinx](https://www.sphinx-doc.org/en/master/) or [napoleon](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/)) will provide a bouns of +0.5 points to the final score.
+- [x] Make use of docstrings. Providing a documentation as HTML files (converted from the docstrings using software such as [sphinx](https://www.sphinx-doc.org/en/master/) or [napoleon](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/)) will provide a bouns of +0.5 points to the final score.
 - [ ] Take some moments for testing & refactoring. You don't need to use test-driven development for this project; nonetheless, you can still make use of specific tests to ensure that your code doesn't break when refactoring. Watch out for [code smells](https://refactoring.guru/refactoring/smells), especially bloaters [large class](https://refactoring.guru/smells/large-class) and [long method](https://refactoring.guru/smells/long-method).
   - Smells like [duplicate code](https://refactoring.guru/smells/duplicate-code) and [ḍead code](https://refactoring.guru/smells/dead-code) are particularly bad since they (i) hinder readability and (ii) makes it easier to create bugs. These will be taken into account when grading
   - Ignore the [Object-Orientation Abusers smell](https://refactoring.guru/refactoring/smells/oo-abusers) since this course is specifically focussed into OOP.
 - [ ] As previously mentioned, use your report to motivate your decisions, like usage of public attributes or methods, unusual/nonintuitive choices on type hints, decisions to use classes not indicated in the requirements, etc.
-- [ ] Attend the practicals for asking questions to the lecturers and the TAs.
-- [ ] Check your emails often for announcements. There is no excuse for not reading your RUG email.
-
-
-
-The minimum score for the project is 1.0; the maximum is 10.0. A grade higher than this score will be clipped to 10.0.
-  - As per course information, the project grade is worth 40% of the final grade for this course.
