@@ -46,11 +46,11 @@ For any Git-related issues, please go to the pull request that is open and tag @
 
 You will need to implement a hierarchy of classes to manage datasets.
 
-- [ ] The implementation will need to contain a base class, defining all the methods and attributes common to all the datasets.
-- [ ] Datasets should have two variants: one including both data and labels, the other including only the data (which can be used, e.g., for testing when there are no labels available).
-- [ ] All datasets should include a `root` attribute, which identifies the root location where the data is stored into the disk. Each data point (e.g., an image, an audio file) should be stored as a single file in the disk, with the name of the file uniquely identifying the data point.
-- [ ] The datasets should return the number of datapoints in it if passed to the `len` built-in function.
-- [ ] Datasets can be used for both regression and classification.
+- [x] The implementation will need to contain a base class, defining all the methods and attributes common to all the datasets.
+- [x] Datasets should have two variants: one including both data and labels, the other including only the data (which can be used, e.g., for testing when there are no labels available).
+- [x] All datasets should include a `root` attribute, which identifies the root location where the data is stored into the disk. Each data point (e.g., an image, an audio file) should be stored as a single file in the disk, with the name of the file uniquely identifying the data point.
+- [x] The datasets should return the number of datapoints in it if passed to the `len` built-in function.
+- [x] Datasets can be used for both regression and classification.
 
   * In the case of **regression**, the data should be stored on disk in the `root` folder (and not any subfolder), with the labels stored in a separate file outside of the `root` folder.
     The labels should be stored in a single file **outside of `root`**, with the file in a `.csv` format.
@@ -80,14 +80,14 @@ You will need to implement a hierarchy of classes to manage datasets.
 
         You should account for both of these configurations in your implementation.
 
-- [ ] The datasets should be able to load the data from the disk, both in a **lazy** and in an **eager** fashion. The eager implementation should **load all the data into memory at once**, while the lazy implementation should store only the data path and **load the data from the disk only when needed**.
+- [x] The datasets should be able to load the data from the disk, both in a **lazy** and in an **eager** fashion. The eager implementation should **load all the data into memory at once**, while the lazy implementation should store only the data path and **load the data from the disk only when needed**.
       _Notice that this implementation does not necessarily need to be implemented with the usage of iterators or generators._
 
-- [ ] In all cases, the data should be accessed using the subsetting operator (e.g., `dataset[i]`), which should return (using the data structure you prefer) the data at the specified index. In the case of a dataset with labels, you should return both the data and the corresponding label. If the dataset has no labels, you should return only the data.
+- [x] In all cases, the data should be accessed using the subsetting operator (e.g., `dataset[i]`), which should return (using the data structure you prefer) the data at the specified index. In the case of a dataset with labels, you should return both the data and the corresponding label. If the dataset has no labels, you should return only the data.
 
-- [ ] The datasets should have a method for **splitting** the data (and labels, if applicable) into training and test sets. The user should be able to split the data by specifying the percentage of data to be used for training. This functionality should return two datasets as output (i.e. `train` and `test`).
+- [x] The datasets should have a method for **splitting** the data (and labels, if applicable) into training and test sets. The user should be able to split the data by specifying the percentage of data to be used for training. This functionality should return two datasets as output (i.e. `train` and `test`).
 
-- [ ] You should create at least two datasets with these characteristics, one handling **images**, the other handling **audio files**.
+- [x] You should create at least two datasets with these characteristics, one handling **images**, the other handling **audio files**.
 
   * For handling images, you can use one of many Python libraries for image processing, such as [Pillow](https://pillow.readthedocs.io/en/stable/) or [OpenCV](https://opencv.org/). Notice that OpenCV, while faster than Pillow, is using the BGR format for images, while Pillow is using the standard RGB format. You should be careful that images loaded into the datasets are in the RGB format.
 
@@ -97,8 +97,8 @@ You will need to implement a hierarchy of classes to manage datasets.
 
 The BatchLoader will be constructed on top of a dataset, and will be responsible for creating batches of data for training a model using, e.g., Stochastic Gradient Descent.
 
-- [ ] The BatchLoader should be able to create batches of data of a specified size.
-- [ ] The user should specify whether they want the batches to be created in a **random** or in a **sequential** fashion:
+- [x] The BatchLoader should be able to create batches of data of a specified size.
+- [x] The user should specify whether they want the batches to be created in a **random** or in a **sequential** fashion:
 
   * In the case of **random** batches, the BatchLoader should create batches of data by randomly shuffling the order of the data points and then creating batches of the specified size.
   * In the case of **sequential** batches, no shuffling should be performed, and the batches should be created in the original order of the data points.
@@ -109,9 +109,9 @@ The BatchLoader will be constructed on top of a dataset, and will be responsible
 
   The image above summarizes the process that the BatchLoader is tasked with carrying out, both for the random batches (shuffling is performed) and sequential batches (shuffling is not performed).
 
-- [ ] Within the BatchLoader, the batches are to be created only using the **indices** of the data points, and the data composing the batch should be loaded from the disk only when needed using an iterator.
+- [x] Within the BatchLoader, the batches are to be created only using the **indices** of the data points, and the data composing the batch should be loaded from the disk only when needed using an iterator.
 
-- [ ] If passed as argument to the `len` method, the BatchLoader should return the number of batches that can be created from the dataset with the specific batch size.
+- [x] If passed as argument to the `len` method, the BatchLoader should return the number of batches that can be created from the dataset with the specific batch size.
 
 ### Data preprocessing (3 pts.)
 
@@ -134,11 +134,11 @@ my_preproc_tech = MyPreprocessingTechnique(hyperparameter_1, hyperparameter_2)
 new_data = my_preproc_tech(old_data)
 ```
 
-- [ ] All the hyperparameters of these techniques---i.e., arguments that the user can specify for the transformations---**should be passed as arguments in the initialization**. The preprocessing technique, when called, **should have only data as arguments**, as in the snippet above.
+- [x] All the hyperparameters of these techniques---i.e., arguments that the user can specify for the transformations---**should be passed as arguments in the initialization**. The preprocessing technique, when called, **should have only data as arguments**, as in the snippet above.
 
-- [ ] **Two classes** need to be for images.
-- [ ] **Two classes** need to be for audio.
-- [ ] In addition, you should create a datatype-agnostic preprocessing class that is able to sequentially perform multiple preprocessing steps.
+- [x] **Two classes** need to be for images.
+- [x] **Two classes** need to be for audio.
+- [x] In addition, you should create a datatype-agnostic preprocessing class that is able to sequentially perform multiple preprocessing steps.
       See the following subsections for more info.
 
 #### Image preprocessing
@@ -193,7 +193,7 @@ In the main, you should showcase the usage of your library.
 
 Notice that, for images and audio, showing means actually plotting some sample images, while, for audio, it refers to playing some sample audio tracks.
 
-1. [ ] Create an image dataset and an audio dataset. Show how you can access your data. You may also plot some images using the `matplotlib.pyplot.imshow` method.
+1. [x] Create an image dataset and an audio dataset. Show how you can access your data. You may also plot some images using the `matplotlib.pyplot.imshow` method.
 
 - Showcase a dataset with and without labels.
 - Showcase a dataset for classification and regression.
@@ -205,8 +205,8 @@ Notice that, for images and audio, showing means actually plotting some sample i
     - For images: object detection and segmentation are **not** image classification tasks; regression tasks can be, e.g., age estimation.
     - For audio: be careful not to use datasets for speech-to-text or other Natural Language Processing-related tasks (the labels are more complicated in this case); regression tasks can be for example [tempo estimation](https://github.com/CPJKU/BallroomAnnotations/blob/master/README.md).
 
-2. [ ] Create a BatchLoader on top of two of these datasets (one for image, one for audio). Show its functionality with and without shuffling, with and without option to discard the last batch.
-3. [ ] Create a pipeline of preprocessing steps, one for audio, one for images:
+2. [x] Create a BatchLoader on top of two of these datasets (one for image, one for audio). Show its functionality with and without shuffling, with and without option to discard the last batch.
+3. [x] Create a pipeline of preprocessing steps, one for audio, one for images:
 
 - Show how you can apply the pipeline on top of a BatchLoader output.
   ```python

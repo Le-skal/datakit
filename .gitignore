@@ -1,11 +1,10 @@
 # OS generated files
 .DS_Store
 
-# iles related to analysis
+# Files related to analysis
 .Rhistory
 
 # Potential data files
-*.csv
 *.sav
 *.feather
 
@@ -15,3 +14,15 @@
 # Python files
 *.pyc
 *__pycache__/
+__pycache__/
+
+# Datasets (large binary files)
+dataset/
+
+# Generated plots
+*.png
+
+# Virtual environments
+.venv/
+venv/
+env/
