@@ -177,11 +177,9 @@ def showcase_datasets() -> None:
     ds_esc50 = AudioDataset(ROOT_ESC50, lazy=True, labels_file=CSV_ESC50_FLAT)
     print(f"  Size : {len(ds_esc50)}")
     (y, sr), category = ds_esc50[0]
-    print(
-        f"  ds[0]: duration={
-            librosa.get_duration(
-                y=y,
-                sr=sr):.1f}s  sr={sr}  category='{category}'")
+    dur = librosa.get_duration(y=y, sr=sr)
+    print(f"  ds[0]: duration={dur:.1f}s  sr={sr}"
+          f"  category='{category}'")
 
     # --- 1f. Labeled audio, folder mode, classification ---------------------
     print("\n[Audio] BallroomData — labeled, folder hierarchy, lazy")

@@ -200,8 +200,8 @@ class LabeledDataset(Dataset, ABC):
         """
         if index < 0 or index >= len(self):
             raise IndexError(
-                f"Index {index} is out of range for dataset of size {
-                    len(self)}."
+                f"Index {index} is out of range "
+                f"for dataset of size {len(self)}."
             )
         data = (
             self._load_file(self._file_paths[index])
@@ -247,8 +247,8 @@ class UnlabeledDataset(Dataset, ABC):
         """
         if index < 0 or index >= len(self):
             raise IndexError(
-                f"Index {index} is out of range for dataset of size {
-                    len(self)}."
+                f"Index {index} is out of range "
+                f"for dataset of size {len(self)}."
             )
         if self._lazy:
             return self._load_file(self._file_paths[index])
