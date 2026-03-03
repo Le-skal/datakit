@@ -213,7 +213,7 @@ def showcase_datasets() -> None:
         ax.set_title(lbl_plot, fontsize=9)
         ax.axis("off")
     plt.tight_layout()
-    plt.savefig("sample_images.png", dpi=100)
+    plt.savefig("img/results/sample_images.png", dpi=100)
     print("\n  [Plot] Saved sample_images.png")
     plt.close()
 
@@ -301,7 +301,7 @@ def showcase_preprocessing(ds_img: ImageDataset,
               f"{processed.shape}  label='{lbl}'")
     fig.suptitle("Image pipeline: CenterCrop -> RandomFlip -> Padding")
     plt.tight_layout()
-    plt.savefig("sample_preprocessing_images.png", dpi=100)
+    plt.savefig("img/results/sample_preprocessing_images.png", dpi=100)
     print("  [Plot] Saved sample_preprocessing_images.png")
     plt.close()
 
@@ -339,7 +339,7 @@ def showcase_preprocessing(ds_img: ImageDataset,
               f" -> spec{spec.shape}  cat='{cat}'")
     fig.suptitle("Audio pipeline: RandomCrop -> Resample -> MelSpectrogram")
     plt.tight_layout()
-    plt.savefig("sample_preprocessing_audio.png", dpi=100)
+    plt.savefig("img/results/sample_preprocessing_audio.png", dpi=100)
     print("  [Plot] Saved sample_preprocessing_audio.png")
     plt.close()
 

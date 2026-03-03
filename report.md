@@ -165,7 +165,7 @@ If an image is smaller than the target in a given dimension, that dimension is l
 
 ### Sample images (Oxford-IIIT-Pet)
 
-![Sample images](sample_images.png)
+![Sample images](img/results/sample_images.png)
 
 ### BatchLoader
 
@@ -190,7 +190,7 @@ If an image is smaller than the target in a given dimension, that dimension is l
 
 **Image pipeline:** `CenterCrop(256×256) → RandomFlip(p=0.5) → Padding(300×300)`
 
-![Image preprocessing](sample_preprocessing_images.png)
+![Image preprocessing](img/results/sample_preprocessing_images.png)
 
 ```
 sample 0: (400, 600, 3) -> (300, 300, 3)  label='Abyssinian'
@@ -202,7 +202,7 @@ sample 4: (350, 233, 3) -> (300, 300, 3)  label='British_Shorthair'
 
 **Audio pipeline:** `AudioRandomCrop(3s) → Resample(22050 Hz) → MelSpectrogram(128 bands)`
 
-![Audio preprocessing](sample_preprocessing_audio.png)
+![Audio preprocessing](img/results/sample_preprocessing_audio.png)
 
 ```
 sample 0: dur=5.0s -> spec(128, 130)  cat='dog'
