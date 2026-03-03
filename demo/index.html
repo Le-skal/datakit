@@ -611,12 +611,25 @@
   <div class="card" style="margin-bottom:1.25rem;">
     <div class="card-header">
       <h3>UTKFace &mdash; Age Estimator
-        <span class="meta">regression &middot; MAE &asymp; 8 yrs</span>
+        <span class="meta">regression &middot; MAE &asymp; 6 yrs</span>
       </h3>
-      <span class="badge badge-soon">Coming soon</span>
+      <span class="badge badge-live"><span class="dot"></span>Live</span>
     </div>
-    <div class="coming-soon-body">
-      Model training in progress &mdash; will be deployed shortly.
+    <div id="utkface-status" class="model-status-msg">Loading model&hellip;</div>
+    <div id="utkface-grid" class="test-grid" style="display:none"></div>
+    <div id="utkface-predict" class="predict-area" style="display:none">
+      <div class="predict-img">
+        <img id="utkface-img" src="" alt="selected">
+      </div>
+      <div>
+        <div class="predict-label" id="utkface-predict-label">click an image</div>
+        <div id="utkface-result" style="font-size:2rem;font-weight:800;color:var(--accent2);margin-bottom:0.5rem;"></div>
+        <div id="utkface-result-label" style="font-size:0.85rem;color:var(--muted);"></div>
+        <div class="ground-truth" id="utkface-gt" style="display:none">
+          Ground truth:&nbsp;<span class="gt-value" id="utkface-gt-val"></span>&nbsp;years
+          <span id="utkface-gt-diff" style="margin-left:0.5rem;"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -902,6 +915,88 @@ async function runOxford(idx) {
 }
 
 initOxford();
+
+/* ── UTKFace Age Estimation inference ──────────────────────────────── */
+let utkfaceModel = null, utkfaceMeta = null;
+
+async function initUtkface() {
+  const statusEl = document.getElementById('utkface-status');
+  try {
+    [utkfaceModel, utkfaceMeta] = await Promise.all([
+      tf.loadGraphModel('models/utkface/model.json'),
+      fetch('test_data/utkface/labels.json').then(r => r.json())
+    ]);
+    buildUtkfaceGrid();
+    statusEl.style.display = 'none';
+    document.getElementById('utkface-grid').style.display    = 'grid';
+    document.getElementById('utkface-predict').style.display = 'grid';
+    runUtkface(0);
+  } catch(e) {
+    console.error('UTKFace model error:', e);
+    statusEl.textContent = 'Error: ' + e.message;
+  }
+}
+
+function buildUtkfaceGrid() {
+  const grid = document.getElementById('utkface-grid');
+  utkfaceMeta.samples.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'test-thumb';
+    btn.onclick = () => runUtkface(i);
+    const img = document.createElement('img');
+    img.src = 'test_data/utkface/' + s.file; img.alt = 'age ' + s.age;
+    btn.appendChild(img); grid.appendChild(btn);
+  });
+}
+
+async function runUtkface(idx) {
+  if (!utkfaceModel) return;
+  document.querySelectorAll('#utkface-grid .test-thumb').forEach((b, i) =>
+    b.classList.toggle('active', i === idx));
+
+  const sample = utkfaceMeta.samples[idx];
+  const imgEl  = document.getElementById('utkface-img');
+  imgEl.src    = 'test_data/utkface/' + sample.file;
+
+  document.getElementById('utkface-predict-label').textContent = 'Running\u2026';
+  document.getElementById('utkface-result').textContent = '';
+  document.getElementById('utkface-result-label').textContent = '';
+  document.getElementById('utkface-gt').style.display = 'none';
+
+  await new Promise(res => {
+    if (imgEl.complete && imgEl.naturalHeight) res(); else imgEl.onload = res;
+  });
+
+  const tensor = tf.tidy(() =>
+    tf.browser.fromPixels(imgEl)
+      .resizeBilinear([224,224]).toFloat().div(127.5).sub(1).expandDims(0)
+  );
+  const output = utkfaceModel.execute(tensor).dataSync()[0];
+  tensor.dispose();
+
+  // Output is sigmoid [0,1], multiply by AGE_MAX to get age
+  const predictedAge = Math.round(output * utkfaceMeta.age_max);
+  const trueAge = sample.age;
+  const diff = Math.abs(predictedAge - trueAge);
+
+  document.getElementById('utkface-predict-label').textContent = 'Predicted age';
+  document.getElementById('utkface-result').textContent = predictedAge + ' years';
+  document.getElementById('utkface-result-label').textContent = 'confidence: ' + (output * 100 / utkfaceMeta.age_max * 100).toFixed(0) + '%';
+
+  document.getElementById('utkface-gt-val').textContent = trueAge;
+  const diffEl = document.getElementById('utkface-gt-diff');
+  if (diff <= 5) {
+    diffEl.textContent = '(\u00b1' + diff + ' yrs) \u2713';
+    diffEl.className = 'gt-correct';
+  } else {
+    diffEl.textContent = '(\u00b1' + diff + ' yrs)';
+    diffEl.className = diff <= 10 ? '' : 'gt-wrong';
+    diffEl.style.color = diff <= 10 ? 'var(--muted2)' : '';
+  }
+  document.getElementById('utkface-gt').style.display = 'flex';
+}
+
+initUtkface();
 </script>
 
 </body>

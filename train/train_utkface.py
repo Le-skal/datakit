@@ -24,15 +24,17 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from src.image_dataset import ImageDataset
 
 # ── Config ───────────────────────────────────────────────────────────────────
-ROOT = "dataset/UTKFace/UTKFace"
-LABELS_CSV = "dataset/utk_labels.csv"
+ROOT = "data/utkfaces/UTKFace"
+LABELS_CSV = "data/utk_labels.csv"
 MODEL_OUT = "models/utkface.h5"
 TEST_OUT = "demo/test_data/utkface"
 IMG_SIZE = 224
 BATCH_SIZE = 32
-EPOCHS = 8
+WARMUP_EPOCHS = 2        # Phase 1: base gelée
+FINETUNE_EPOCHS = 8      # Phase 2: fine-tuning
 N_TEST_SAMPLES = 20
-AGE_MAX = 116.0      # normalise labels to [0, 1] during training
+AGE_MAX = 116.0          # normalise labels to [0, 1] during training
+FINETUNE_LAYERS = 50     # Nombre de couches à dégeler
 
 # ── Load dataset ──────────────────────────────────────────────────────────────
 print("Loading UTKFace dataset...")
@@ -69,6 +71,7 @@ def make_tf_dataset(subset, shuffle=False):
             ),
         )
         .batch(BATCH_SIZE)
+        .repeat()
         .prefetch(tf.data.AUTOTUNE)
     )
 
@@ -94,11 +97,33 @@ model.compile(
     metrics=["mae"],
 )
 
-# ── Train ─────────────────────────────────────────────────────────────────────
-print(f"Training for {EPOCHS} epochs...")
+# ── Train Phase 1: Warmup (base gelée) ────────────────────────────────────────
+print(f"Phase 1: Warmup for {WARMUP_EPOCHS} epochs (base frozen)...")
 train_tf = make_tf_dataset(train_ds, shuffle=True)
 test_tf = make_tf_dataset(test_ds)
-model.fit(train_tf, epochs=EPOCHS, validation_data=test_tf)
+steps_per_epoch = len(train_ds) // BATCH_SIZE
+validation_steps = len(test_ds) // BATCH_SIZE
+model.fit(train_tf, epochs=WARMUP_EPOCHS, steps_per_epoch=steps_per_epoch,
+          validation_data=test_tf, validation_steps=validation_steps)
+
+# ── Train Phase 2: Fine-tuning (dernières couches dégelées) ───────────────────
+print(f"\nPhase 2: Fine-tuning for {FINETUNE_EPOCHS} epochs (unfreezing last {FINETUNE_LAYERS} layers)...")
+base.trainable = True
+for layer in base.layers[:-FINETUNE_LAYERS]:
+    layer.trainable = False
+
+# Recompiler avec un LR plus faible pour ne pas casser les poids
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(1e-4),
+    loss="mse",
+    metrics=["mae"],
+)
+
+# Recréer les datasets (le générateur s'est épuisé)
+train_tf = make_tf_dataset(train_ds, shuffle=True)
+test_tf = make_tf_dataset(test_ds)
+model.fit(train_tf, epochs=FINETUNE_EPOCHS, steps_per_epoch=steps_per_epoch,
+          validation_data=test_tf, validation_steps=validation_steps)
 
 # ── Save model ────────────────────────────────────────────────────────────────
 os.makedirs("models", exist_ok=True)

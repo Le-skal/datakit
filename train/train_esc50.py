@@ -29,8 +29,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from src.audio_dataset import AudioDataset
 
 # ── Config ───────────────────────────────────────────────────────────────────
-ROOT = "dataset/ESC-50-master/audio"
-LABELS_CSV = "dataset/esc50_labels.csv"
+ROOT = "data/ESC-50-master/audio"
+LABELS_CSV = "data/esc50_labels.csv"
 MODEL_OUT = "models/esc50.h5"
 TEST_OUT = "demo/test_data/esc50"
 IMG_SIZE = 224
@@ -106,6 +106,7 @@ def make_tf_dataset(subset, shuffle=False):
             ),
         )
         .batch(BATCH_SIZE)
+        .repeat()
         .prefetch(tf.data.AUTOTUNE)
     )
 
@@ -135,7 +136,10 @@ model.compile(
 print(f"Training for {EPOCHS} epochs...")
 train_tf = make_tf_dataset(train_ds, shuffle=True)
 test_tf = make_tf_dataset(test_ds)
-model.fit(train_tf, epochs=EPOCHS, validation_data=test_tf)
+steps_per_epoch = len(train_ds) // BATCH_SIZE
+validation_steps = len(test_ds) // BATCH_SIZE
+model.fit(train_tf, epochs=EPOCHS, steps_per_epoch=steps_per_epoch,
+          validation_data=test_tf, validation_steps=validation_steps)
 
 # ── Save model ────────────────────────────────────────────────────────────────
 os.makedirs("models", exist_ok=True)

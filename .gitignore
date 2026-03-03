@@ -18,6 +18,7 @@ __pycache__/
 
 # Datasets (large binary files)
 dataset/
+data/
 
 # Sphinx build output
 docs/_build/

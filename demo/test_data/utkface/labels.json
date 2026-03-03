@@ -1,0 +1,85 @@
+{
+  "age_max": 116.0,
+  "samples": [
+    {
+      "file": "000.jpg",
+      "age": 30
+    },
+    {
+      "file": "001.jpg",
+      "age": 9
+    },
+    {
+      "file": "002.jpg",
+      "age": 35
+    },
+    {
+      "file": "003.jpg",
+      "age": 55
+    },
+    {
+      "file": "004.jpg",
+      "age": 32
+    },
+    {
+      "file": "005.jpg",
+      "age": 55
+    },
+    {
+      "file": "006.jpg",
+      "age": 25
+    },
+    {
+      "file": "007.jpg",
+      "age": 30
+    },
+    {
+      "file": "008.jpg",
+      "age": 70
+    },
+    {
+      "file": "009.jpg",
+      "age": 47
+    },
+    {
+      "file": "010.jpg",
+      "age": 3
+    },
+    {
+      "file": "011.jpg",
+      "age": 22
+    },
+    {
+      "file": "012.jpg",
+      "age": 40
+    },
+    {
+      "file": "013.jpg",
+      "age": 40
+    },
+    {
+      "file": "014.jpg",
+      "age": 23
+    },
+    {
+      "file": "015.jpg",
+      "age": 39
+    },
+    {
+      "file": "016.jpg",
+      "age": 10
+    },
+    {
+      "file": "017.jpg",
+      "age": 29
+    },
+    {
+      "file": "018.jpg",
+      "age": 49
+    },
+    {
+      "file": "019.jpg",
+      "age": 80
+    }
+  ]
+}

@@ -49,7 +49,7 @@ Install deps on training PC: `pip install tensorflow librosa soundfile pillow nu
 | Model | Script | Status | Output |
 |---|---|---|---|
 | Oxford-IIIT-Pet (37 breeds) | `python train/train_oxford_pet.py` | ✅ Done | 90% val acc, 8 epochs |
-| UTKFace (age regression) | `python train/train_utkface.py` | ⬜ TODO | MAE target ~8 yrs |
+| UTKFace (age regression) | `python train/train_utkface.py` | ✅ Done | MAE ~6 yrs, fine-tuned 10 epochs |
 | ESC-50 (50 sounds) | `python train/train_esc50.py` | ⬜ TODO | audio → mel spec → MobileNetV2 |
 | BallroomData (8 genres) | `python train/train_ballroom.py` | ⬜ TODO | audio → mel spec → MobileNetV2 |
 
