@@ -1,7 +1,7 @@
 # OOP for AI — Final Project Report
 
 **Author:** Raphael MARTIN
-**Date:** 2024
+**Date:** 2026
 
 ---
 
@@ -166,7 +166,7 @@ HTML documentation is generated from docstrings using **Sphinx** with the
 has a Google-style docstring covering arguments, return values, and exceptions.
 
 The documentation is hosted online at:
-**https://le-skal.github.io/prochain_challenge/**
+**https://le-skal.github.io/datakit/**
 
 To build the docs locally:
 
