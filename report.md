@@ -165,6 +165,9 @@ HTML documentation is generated from docstrings using **Sphinx** with the
 `autodoc` and `napoleon` extensions. Every public class, method, and function
 has a Google-style docstring covering arguments, return values, and exceptions.
 
+The documentation is hosted online at:
+**https://le-skal.github.io/prochain_challenge/**
+
 To build the docs locally:
 
 ```bash
