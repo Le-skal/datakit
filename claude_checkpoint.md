@@ -1,11 +1,12 @@
 # Claude Checkpoint — OOP for AI (cours)
 
 ## Project
-Root: `C:/Users/rmartin/Desktop/code/cours/`
+Root: `C:/Users/rmartin/Desktop/code agefi/cours/`
 Goal: OOP final project — dataset hierarchy, BatchLoader, preprocessing pipeline.
 GitHub: https://github.com/le-skal/datakit
 Sphinx docs: https://le-skal.github.io/datakit/
-Vercel demo: not yet deployed (serve locally with `cd demo && python -m http.server 8000`)
+Vercel demo: **live** at the Vercel URL (connect repo → auto-deploys on push to main)
+Local preview: `cd demo && python -m http.server 8000`
 
 ---
 
@@ -34,56 +35,88 @@ All datasets go in `dataset/` (gitignored). Download, extract, done.
 - `main.py`, `tests/test_all.py` (46 tests passing), `report.md`
 - Sphinx docs on GitHub Pages
 
+### Vercel demo ✅ (deployed + live)
+- CSS redesign done — professional dark theme, gradient title, Inter font
+- Oxford Pet classifier: **live** (20 test images, top-3 predictions + ground truth)
+- UTKFace / ESC-50 / BallroomData: "Coming soon" placeholders in the UI
+- JS uses `tf.loadGraphModel()` + `model.execute()` (NOT executeAsync, NOT loadLayersModel)
+
 ### Model training
-Install: `pip install tensorflow` (training only — no tensorflowjs needed on Windows)
 
-| Model | Script | Status | Notes |
+Install deps on training PC: `pip install tensorflow librosa soundfile pillow numpy`
+(no tensorflowjs needed on Windows — conversion happens in Colab)
+
+| Model | Script | Status | Output |
 |---|---|---|---|
-| Oxford-IIIT-Pet (37 breeds) | `python train/train_oxford_pet.py` | ✅ Trained + converted + working in demo | 90% val acc, 8 epochs |
-| UTKFace (age regression) | `python train/train_utkface.py` | ⬜ TODO (other PC) | |
-| ESC-50 (50 sounds) | `python train/train_esc50.py` | ⬜ TODO (other PC) | |
-| BallroomData (8 genres) | `python train/train_ballroom.py` | ⬜ TODO (other PC) | |
+| Oxford-IIIT-Pet (37 breeds) | `python train/train_oxford_pet.py` | ✅ Done | 90% val acc, 8 epochs |
+| UTKFace (age regression) | `python train/train_utkface.py` | ⬜ TODO | MAE target ~8 yrs |
+| ESC-50 (50 sounds) | `python train/train_esc50.py` | ⬜ TODO | audio → mel spec → MobileNetV2 |
+| BallroomData (8 genres) | `python train/train_ballroom.py` | ⬜ TODO | audio → mel spec → MobileNetV2 |
 
-Training scripts now also call `model.export(...)` → saves a `_savedmodel/` folder.
+Each training script automatically:
+1. Trains MobileNetV2 (frozen base + custom head) on 80% of data
+2. Saves `models/<name>.h5` (gitignored — too large)
+3. Exports `models/<name>_savedmodel/` (gitignored — needed for Colab conversion)
+4. Saves 20 test samples to `demo/test_data/<name>/` + `labels.json` (committed ✅)
 
-### TF.js conversion (important — Keras 3 quirks)
-**Do NOT use `--input_format=keras`** — Keras 3 model topology is incompatible with TF.js.
-**Use SavedModel format instead:**
+---
 
-In Google Colab (no WSL/admin needed):
+## TF.js Conversion (Colab — do this after each model is trained)
+
+**CRITICAL:** Do NOT use `--input_format=keras` or the CLI converter — both are broken with Keras 3.
+**Use SavedModel + Python API instead.**
+
+### Step 1 — Upload to Colab
+Upload `models/<name>.h5` (or `models/<name>_savedmodel/` folder zipped) to Google Colab.
+
+### Step 2 — Convert (3 Colab cells)
+
 ```python
-# Cell 1 — export
+# Cell 1 — re-export to SavedModel (skip if you already have _savedmodel folder)
 import tensorflow as tf
 model = tf.keras.models.load_model('mymodel.h5')
 model.export('mymodel_savedmodel')
+```
 
-# Cell 2 — convert
+```python
+# Cell 2 — convert to TF.js
 import tensorflowjs as tfjs
 tfjs.converters.convert_tf_saved_model('mymodel_savedmodel', 'mymodel_tfjs')
-# (use Python API, not CLI — CLI has a bug with argument parsing)
+# Use Python API only — CLI has a bug ("Missing output_path" even with correct args)
+```
 
-# Cell 3 — download
+```python
+# Cell 3 — download as zip
 import shutil
 shutil.make_archive('mymodel_tfjs', 'zip', 'mymodel_tfjs')
+# Then Files panel → download mymodel_tfjs.zip
 ```
-Extract zip → put contents in `demo/models/<modelname>/`.
 
-In the browser JS: use `tf.loadGraphModel()` + `model.executeAsync()` (NOT loadLayersModel/predict).
-TF.js version pinned to `4.22.0` in index.html to match the converter.
+### Step 3 — Add to repo
+Extract zip → copy contents into `demo/models/<modelname>/`
+Commit + push → Vercel auto-deploys.
 
-### Vercel demo ✅ Working locally
-- `demo/index.html` — preprocessing pipeline demo + ML inference section
-- Oxford Pet classifier: **live and working** (20 test images, top-3 predictions, ground truth)
-- UTKFace / ESC-50 / BallroomData: "Coming soon" placeholders
-- **TODO:** deploy to Vercel (connect repo at vercel.com, vercel.json already configured)
-- **TODO:** redesign CSS — user wants a more professional look for portfolio
+---
 
-### Next session priorities
-1. CSS/design overhaul of `demo/index.html` — remove v1.0 badge, more portfolio-worthy
-2. Train UTKFace + ESC-50 + BallroomData on other PC
-3. Convert remaining 3 models via Google Colab (use Python API, not CLI)
-4. Add model inference sections for all 3 (JS already structured for this)
-5. Deploy to Vercel + push everything
+## Adding a New Model to the Frontend
+
+When a model is ready, replace its "Coming soon" card in `demo/index.html`.
+Follow the Oxford Pet pattern exactly:
+
+1. Add a `<div id="<name>-grid" class="test-grid">` and `<div id="<name>-predict" class="predict-area">` inside the card
+2. Add badge `<span class="badge badge-live"><span class="dot"></span>Live</span>`
+3. Write `init<Name>()`, `build<Name>Grid()`, `run<Name>(idx)` functions in JS
+4. Call `init<Name>()` at the bottom of the script
+
+**UTKFace specifics (regression, not classification):**
+- Model output is a single sigmoid value → multiply by `AGE_MAX=116` to get predicted age
+- Display as "Predicted age: X yrs" instead of top-3 bars
+- Labels in `labels.json` are integer ages
+
+**ESC-50 / BallroomData specifics (audio → mel spec → image):**
+- Test samples are already saved as PNG spectrograms (not audio files)
+- Load and run exactly like Oxford Pet (same image → MobileNetV2 pipeline)
+- Display top-3 class predictions with confidence bars (same as Oxford Pet)
 
 ---
 
@@ -92,6 +125,7 @@ TF.js version pinned to `4.22.0` in index.html to match the converter.
 - CSV labels auto-cast: int → float → str
 - Audio `_load_file` returns `(np.ndarray, int)` tuple
 - `LabeledDataset.__init__` sets `_labels = []` before `super().__init__()`
+- `.gitignore` uses `/models/` (with leading slash) so `demo/models/` is NOT ignored
 
 ## Dependencies
 Core: `pillow`, `numpy`, `librosa`, `soundfile`, `matplotlib`, `scipy`

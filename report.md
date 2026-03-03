@@ -266,7 +266,30 @@ sample 4: dur=5.0s -> spec(128, 130)  cat='breathing'
 
 ---
 
-## 7. Usage
+## 7. Interactive Demo
+
+A live demo is hosted at **https://datakit.deepskal.com/**
+
+The demo showcases two aspects of the project directly in the browser, with no backend or server-side computation:
+
+**Preprocessing pipeline**
+The three image transforms (`CenterCrop`, `RandomFlip`, `Padding`) are reimplemented in JavaScript using the Canvas API, mirroring the Python behaviour exactly. Users can toggle each transform on/off, adjust parameters in real time, and see the before/after output with pixel dimensions displayed.
+
+**In-browser ML inference**
+A MobileNetV2 model fine-tuned on Oxford-IIIT-Pet (37 breed classes) is loaded via TensorFlow.js and runs entirely client-side. The model was trained using the DataKit pipeline (`ImageDataset.split(0.8)`) and converted to TF.js format via SavedModel export. Users can click any of the 20 held-out test images and receive top-3 breed predictions with confidence bars and ground-truth comparison in real time.
+
+| | Details |
+|---|---|
+| Framework | TensorFlow.js 4.22.0 |
+| Model | MobileNetV2 (frozen ImageNet base + custom head) |
+| Training | 8 epochs, Adam 1e-3, 80/20 split via DataKit |
+| Val accuracy | ~90% on 37 classes |
+| Inference | `tf.loadGraphModel()` + `model.execute()`, fully client-side |
+| Hosting | Vercel (static, auto-deploys on push to `main`) |
+
+---
+
+## 8. Usage
 
 ```python
 from src.image_dataset import ImageDataset, UnlabeledImageDataset
