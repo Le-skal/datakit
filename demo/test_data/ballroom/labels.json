@@ -1,0 +1,96 @@
+{
+  "classes": [
+    "ChaChaCha",
+    "Jive",
+    "Quickstep",
+    "Rumba-American",
+    "Rumba-International",
+    "Rumba-Misc",
+    "Samba",
+    "Tango",
+    "VienneseWaltz",
+    "Waltz"
+  ],
+  "samples": [
+    {
+      "file": "000_spec.png",
+      "label": "ChaChaCha"
+    },
+    {
+      "file": "001_spec.png",
+      "label": "VienneseWaltz"
+    },
+    {
+      "file": "002_spec.png",
+      "label": "VienneseWaltz"
+    },
+    {
+      "file": "003_spec.png",
+      "label": "Rumba-Misc"
+    },
+    {
+      "file": "004_spec.png",
+      "label": "Rumba-International"
+    },
+    {
+      "file": "005_spec.png",
+      "label": "Tango"
+    },
+    {
+      "file": "006_spec.png",
+      "label": "Quickstep"
+    },
+    {
+      "file": "007_spec.png",
+      "label": "Rumba-International"
+    },
+    {
+      "file": "008_spec.png",
+      "label": "Quickstep"
+    },
+    {
+      "file": "009_spec.png",
+      "label": "Quickstep"
+    },
+    {
+      "file": "010_spec.png",
+      "label": "VienneseWaltz"
+    },
+    {
+      "file": "011_spec.png",
+      "label": "ChaChaCha"
+    },
+    {
+      "file": "012_spec.png",
+      "label": "Tango"
+    },
+    {
+      "file": "013_spec.png",
+      "label": "Waltz"
+    },
+    {
+      "file": "014_spec.png",
+      "label": "ChaChaCha"
+    },
+    {
+      "file": "015_spec.png",
+      "label": "ChaChaCha"
+    },
+    {
+      "file": "016_spec.png",
+      "label": "Samba"
+    },
+    {
+      "file": "017_spec.png",
+      "label": "Waltz"
+    },
+    {
+      "file": "018_spec.png",
+      "label": "Rumba-International"
+    },
+    {
+      "file": "019_spec.png",
+      "label": "Tango"
+    }
+  ]
+}

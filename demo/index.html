@@ -662,12 +662,24 @@
   <div class="card" style="margin-bottom:1.25rem;">
     <div class="card-header">
       <h3>BallroomData &mdash; Genre Classifier
-        <span class="meta">8 genres &middot; audio &rarr; mel spectrogram &rarr; MobileNetV2</span>
+        <span class="meta">10 genres &middot; audio &rarr; mel spectrogram &rarr; MobileNetV2</span>
       </h3>
-      <span class="badge badge-soon">Coming soon</span>
+      <span class="badge badge-live"><span class="dot"></span>Live</span>
     </div>
-    <div class="coming-soon-body">
-      Model training in progress &mdash; will be deployed shortly.
+    <div id="ballroom-status" class="model-status-msg">Loading model&hellip;</div>
+    <div id="ballroom-grid" class="test-grid" style="display:none"></div>
+    <div id="ballroom-predict" class="predict-area" style="display:none">
+      <div class="predict-img">
+        <img id="ballroom-img" src="" alt="selected">
+      </div>
+      <div>
+        <div class="predict-label" id="ballroom-predict-label">click a spectrogram</div>
+        <div id="ballroom-bars"></div>
+        <div class="ground-truth" id="ballroom-gt" style="display:none">
+          Ground truth:&nbsp;<span class="gt-value" id="ballroom-gt-val"></span>
+          <span id="ballroom-gt-icon"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1099,6 +1111,95 @@ async function runEsc50(idx) {
 }
 
 initEsc50();
+
+/* ── BallroomData Genre Classification inference ───────────────────── */
+let ballroomModel = null, ballroomMeta = null;
+
+async function initBallroom() {
+  const statusEl = document.getElementById('ballroom-status');
+  try {
+    [ballroomModel, ballroomMeta] = await Promise.all([
+      tf.loadGraphModel('models/ballroom/model.json'),
+      fetch('test_data/ballroom/labels.json').then(r => r.json())
+    ]);
+    buildBallroomGrid();
+    statusEl.style.display = 'none';
+    document.getElementById('ballroom-grid').style.display    = 'grid';
+    document.getElementById('ballroom-predict').style.display = 'grid';
+    runBallroom(0);
+  } catch(e) {
+    console.error('Ballroom model error:', e);
+    statusEl.textContent = 'Error: ' + e.message;
+  }
+}
+
+function buildBallroomGrid() {
+  const grid = document.getElementById('ballroom-grid');
+  ballroomMeta.samples.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'test-thumb';
+    btn.onclick = () => runBallroom(i);
+    const img = document.createElement('img');
+    img.src = 'test_data/ballroom/' + s.file; img.alt = s.label;
+    btn.appendChild(img); grid.appendChild(btn);
+  });
+}
+
+async function runBallroom(idx) {
+  if (!ballroomModel) return;
+  document.querySelectorAll('#ballroom-grid .test-thumb').forEach((b, i) =>
+    b.classList.toggle('active', i === idx));
+
+  const sample = ballroomMeta.samples[idx];
+  const imgEl  = document.getElementById('ballroom-img');
+  imgEl.src    = 'test_data/ballroom/' + sample.file;
+
+  document.getElementById('ballroom-predict-label').textContent = 'Running\u2026';
+  document.getElementById('ballroom-bars').innerHTML = '';
+  document.getElementById('ballroom-gt').style.display = 'none';
+
+  await new Promise(res => {
+    if (imgEl.complete && imgEl.naturalHeight) res(); else imgEl.onload = res;
+  });
+
+  const tensor = tf.tidy(() => {
+    const gray = tf.browser.fromPixels(imgEl, 1);
+    const rgb = tf.concat([gray, gray, gray], 2);
+    return rgb.resizeBilinear([224,224]).toFloat().div(127.5).sub(1).expandDims(0);
+  });
+  const probs = Array.from(ballroomModel.execute(tensor).dataSync());
+  tensor.dispose();
+
+  const ranked = probs
+    .map((p, i) => ({ prob: p, label: ballroomMeta.classes[i] }))
+    .sort((a, b) => b.prob - a.prob).slice(0, 3);
+
+  const barsEl = document.getElementById('ballroom-bars');
+  barsEl.innerHTML = '';
+  ranked.forEach((r, i) => {
+    const pct = (r.prob * 100).toFixed(1);
+    const row = document.createElement('div');
+    row.className = 'pred-bar-row';
+    row.innerHTML = `
+      <div class="pred-bar-meta">
+        <span class="pred-name">${r.label}</span>
+        <span class="pred-pct">${pct}%</span>
+      </div>
+      <div class="pred-bar-track">
+        <div class="pred-bar-fill ${i===0?'rank-1':''}" style="width:${pct}%"></div>
+      </div>`;
+    barsEl.appendChild(row);
+  });
+
+  document.getElementById('ballroom-predict-label').textContent = 'Top\u20113 predictions';
+  const correct = ranked[0].label === sample.label;
+  document.getElementById('ballroom-gt-val').textContent  = sample.label;
+  document.getElementById('ballroom-gt-icon').textContent = correct ? '\u2713' : '\u2717';
+  document.getElementById('ballroom-gt-icon').className   = correct ? 'gt-correct' : 'gt-wrong';
+  document.getElementById('ballroom-gt').style.display    = 'flex';
+}
+
+initBallroom();
 </script>
 
 </body>
