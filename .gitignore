@@ -19,8 +19,7 @@ __pycache__/
 # Datasets (large binary files)
 dataset/
 
-# Generated plots
-*.png
+# Generated plots (report images are committed intentionally)
 
 # Virtual environments
 .venv/

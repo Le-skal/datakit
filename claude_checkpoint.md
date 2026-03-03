@@ -38,8 +38,8 @@ Goal: OOP final project — dataset hierarchy, BatchLoader, preprocessing pipeli
 ## Todo list
 
 - [ ] **Sphinx** — generate HTML docs from existing docstrings (+0.5 bonus). Do on a good PC.
-- [ ] **report.md** — write design decisions + workload split. Leave result placeholders until Sphinx/main.py output is available.
-- [ ] **Generic indications checkboxes** — tick encapsulation, type checks, docstrings in README once report is written.
+- [x] **report.md** — written with full design decisions, results, images, usage examples.
+- [x] **Generic indications checkboxes** — encapsulation, type checks, docstrings, report all ticked.
 - [ ] **Commit & push** after each of the above.
 
 ---
