@@ -96,10 +96,10 @@ class CenterCrop(Transform):
         h, w = data.shape[:2]
         if h > self._height:
             top = (h - self._height) // 2
-            data = data[top : top + self._height, :]
+            data = data[top: top + self._height, :]
         if w > self._width:
             left = (w - self._width) // 2
-            data = data[:, left : left + self._width]
+            data = data[:, left: left + self._width]
         return data
 
     @property
@@ -151,10 +151,10 @@ class RandomCrop(Transform):
         h, w = data.shape[:2]
         if h > self._height:
             top = random.randint(0, h - self._height)
-            data = data[top : top + self._height, :]
+            data = data[top: top + self._height, :]
         if w > self._width:
             left = random.randint(0, w - self._width)
-            data = data[:, left : left + self._width]
+            data = data[:, left: left + self._width]
         return data
 
     @property
@@ -263,7 +263,7 @@ class Padding(Transform):
         canvas = np.full((out_h, out_w, 3), self._color, dtype=data.dtype)
         top = (out_h - h) // 2
         left = (out_w - w) // 2
-        canvas[top : top + h, left : left + w] = data
+        canvas[top: top + h, left: left + w] = data
         return canvas
 
     @property
@@ -325,7 +325,8 @@ class MelSpectrogram(Transform):
         check_type(data, tuple, "data")
         y, sr = data
         return librosa.feature.melspectrogram(
-            y=y, sr=sr, n_mels=self._n_mels, n_fft=self._n_fft, hop_length=self._hop_length
+            y=y, sr=sr, n_mels=self._n_mels,
+            n_fft=self._n_fft, hop_length=self._hop_length
         )
 
     @property
@@ -380,7 +381,7 @@ class AudioRandomCrop(Transform):
         start_sec = random.uniform(0.0, total - self._duration)
         start = int(start_sec * sr)
         n = int(self._duration * sr)
-        return y[start : start + n], sr
+        return y[start: start + n], sr
 
     @property
     def duration(self) -> float:
@@ -420,7 +421,8 @@ class Resample(Transform):
         y, sr = data
         if sr == self._target_sr:
             return data
-        y_resampled = librosa.resample(y, orig_sr=sr, target_sr=self._target_sr)
+        y_resampled = librosa.resample(
+            y, orig_sr=sr, target_sr=self._target_sr)
         return y_resampled, self._target_sr
 
     @property
@@ -456,7 +458,8 @@ class PitchShift(Transform):
         """
         check_type(data, tuple, "data")
         y, sr = data
-        y_shifted = librosa.effects.pitch_shift(y, sr=sr, n_steps=self._n_steps)
+        y_shifted = librosa.effects.pitch_shift(
+            y, sr=sr, n_steps=self._n_steps)
         return y_shifted, sr
 
     @property

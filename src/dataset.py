@@ -27,8 +27,8 @@ class Dataset(ABC):
     Attributes (private):
         _root: Root folder path where data files are stored.
         _lazy: Whether to load data lazily (on access) or eagerly (at init).
-        _file_paths: List of absolute file paths discovered by :meth:`_scan_files`.
-        _data: List of pre-loaded data objects when *eager*; ``None`` when lazy.
+        _file_paths: Paths discovered by :meth:`_scan_files`.
+        _data: Pre-loaded data objects when *eager*; ``None`` when lazy.
     """
 
     def __init__(self, root: str, lazy: bool = True) -> None:
@@ -104,7 +104,8 @@ class Dataset(ABC):
         train_indices = indices[:split_idx]
         test_indices = indices[split_idx:]
 
-        return self._create_subset(train_indices), self._create_subset(test_indices)
+        return self._create_subset(
+            train_indices), self._create_subset(test_indices)
 
     def _create_subset(self, indices: list[int]) -> Dataset:
         """Create a new dataset instance containing only the specified indices.
@@ -137,7 +138,8 @@ class Dataset(ABC):
         new_ds._lazy = self._lazy
         new_ds._file_paths = [self._file_paths[i] for i in indices]
         new_ds._data = (
-            [self._data[i] for i in indices] if self._data is not None else None
+            [self._data[i] for i in indices]
+            if self._data is not None else None
         )
 
     # ------------------------------------------------------------------
@@ -198,7 +200,8 @@ class LabeledDataset(Dataset, ABC):
         """
         if index < 0 or index >= len(self):
             raise IndexError(
-                f"Index {index} is out of range for dataset of size {len(self)}."
+                f"Index {index} is out of range for dataset of size {
+                    len(self)}."
             )
         data = (
             self._load_file(self._file_paths[index])
@@ -211,7 +214,8 @@ class LabeledDataset(Dataset, ABC):
         """Extend the base copy logic to also slice ``_labels``."""
         super()._init_subset(new_ds, indices)
         # new_ds is guaranteed to be a LabeledDataset subclass.
-        new_ds._labels = [self._labels[i] for i in indices]  # type: ignore[attr-defined]
+        new_ds._labels = [self._labels[i]
+                          for i in indices]  # type: ignore[attr-defined]
 
     # ------------------------------------------------------------------
     # Properties
@@ -243,7 +247,8 @@ class UnlabeledDataset(Dataset, ABC):
         """
         if index < 0 or index >= len(self):
             raise IndexError(
-                f"Index {index} is out of range for dataset of size {len(self)}."
+                f"Index {index} is out of range for dataset of size {
+                    len(self)}."
             )
         if self._lazy:
             return self._load_file(self._file_paths[index])

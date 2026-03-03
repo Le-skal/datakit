@@ -30,7 +30,7 @@ class ImageDataset(LabeledDataset):
 
     **CSV mode** (``labels_file`` provided):
         Images are stored flat inside *root*. A CSV file maps each filename
-        to its label (string for classification, numeric string for regression).
+        to its label (string for classification, numeric for regression).
 
     **Folder mode** (``labels_file`` is ``None``):
         Images are stored inside per-class subdirectories of *root*. The label
@@ -99,7 +99,8 @@ class ImageDataset(LabeledDataset):
             for path in self._file_paths:
                 fname = os.path.basename(path)
                 raw = mapping[fname]
-                # Try to cast to numeric; fall back to string for classification.
+                # Try to cast to numeric; fall back to string for
+                # classification.
                 try:
                     label: Any = int(raw)
                 except ValueError:

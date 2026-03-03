@@ -27,7 +27,8 @@ def check_type(value: object, expected_type: type | tuple, name: str) -> None:
         )
 
 
-def check_range(value: float, min_val: float, max_val: float, name: str) -> None:
+def check_range(value: float, min_val: float,
+                max_val: float, name: str) -> None:
     """Raise ValueError if value is not within [min_val, max_val].
 
     Args:
@@ -69,7 +70,8 @@ def parse_labels_csv(labels_file: str) -> dict[str, str]:
         for row_num, row in enumerate(reader, start=1):
             if len(row) < 2:
                 raise ValueError(
-                    f"Row {row_num} in '{labels_file}' has fewer than 2 columns."
+                    f"Row {row_num} in '{labels_file}'"
+                    " has fewer than 2 columns."
                 )
             filename, label = row[0].strip(), row[1].strip()
             mapping[filename] = label

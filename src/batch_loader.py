@@ -51,7 +51,8 @@ class BatchLoader:
         check_type(shuffle, bool, "shuffle")
         check_type(drop_last, bool, "drop_last")
         if batch_size < 1:
-            raise ValueError(f"'batch_size' must be at least 1, got {batch_size}.")
+            raise ValueError(
+                f"'batch_size' must be at least 1, got {batch_size}.")
 
         self._dataset: Dataset = dataset
         self._batch_size: int = batch_size
@@ -74,7 +75,7 @@ class BatchLoader:
             random.shuffle(indices)
 
         for start in range(0, len(indices), self._batch_size):
-            batch_indices = indices[start : start + self._batch_size]
+            batch_indices = indices[start: start + self._batch_size]
             if self._drop_last and len(batch_indices) < self._batch_size:
                 return
             yield [self._dataset[i] for i in batch_indices]

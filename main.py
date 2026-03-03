@@ -2,9 +2,11 @@
 
 Demonstrates:
   1. CSV generation helpers (UTKFace age labels, Ballroom BPM labels)
-  2. Dataset hierarchy — labeled/unlabeled, classification/regression, lazy/eager
+  2. Dataset hierarchy — labeled/unlabeled, classification/regression,
+     lazy/eager
   3. BatchLoader — sequential vs random, keep vs drop last batch
-  4. Preprocessing pipelines — applied to dataset samples and batch-loader batches
+  4. Preprocessing pipelines — applied to dataset samples and
+     batch-loader batches
 """
 
 import csv
@@ -32,17 +34,17 @@ from src.preprocessing import (
 # 0.  Paths
 # ---------------------------------------------------------------------------
 
-ROOT_OXFORD   = "dataset/Oxford-IIIT-Pet"
-ROOT_UTK      = "dataset/UTKFace/UTKFace"
-ROOT_ESC50    = "dataset/ESC-50/audio"
+ROOT_OXFORD = "dataset/Oxford-IIIT-Pet"
+ROOT_UTK = "dataset/UTKFace/UTKFace"
+ROOT_ESC50 = "dataset/ESC-50/audio"
 ROOT_BALLROOM = "dataset/BallroomData"
-ROOT_WALTZ    = "dataset/BallroomData/Waltz"
-ANN_DIR       = "dataset/BallroomAnnotations"
+ROOT_WALTZ = "dataset/BallroomData/Waltz"
+ANN_DIR = "dataset/BallroomAnnotations"
 
-CSV_OXFORD  = "dataset/oxford_labels.csv"
-CSV_UTK     = "dataset/utk_labels.csv"
-CSV_ESC50   = "dataset/ESC-50/meta/esc50.csv"
-CSV_BPM     = "dataset/ballroom_bpm.csv"
+CSV_OXFORD = "dataset/oxford_labels.csv"
+CSV_UTK = "dataset/utk_labels.csv"
+CSV_ESC50 = "dataset/ESC-50/meta/esc50.csv"
+CSV_BPM = "dataset/ballroom_bpm.csv"
 
 
 # ---------------------------------------------------------------------------
@@ -72,7 +74,7 @@ def generate_utk_csv(root: str, out_path: str) -> None:
 
 
 def _bpm_from_beats_file(path: str) -> float:
-    """Estimate BPM from a .beats annotation file (mean inter-beat interval)."""
+    """Estimate BPM from a .beats file (mean inter-beat interval)."""
     times = []
     with open(path, encoding="utf-8") as fh:
         for line in fh:
@@ -85,7 +87,8 @@ def _bpm_from_beats_file(path: str) -> float:
     return float(60.0 / np.mean(intervals))
 
 
-def generate_ballroom_bpm_csv(audio_root: str, ann_dir: str, out_path: str) -> None:
+def generate_ballroom_bpm_csv(
+        audio_root: str, ann_dir: str, out_path: str) -> None:
     """Generate a CSV mapping Waltz filename -> BPM (regression label).
 
     Only covers files in *audio_root* (a single genre folder) that have a
@@ -109,8 +112,9 @@ def generate_ballroom_bpm_csv(audio_root: str, ann_dir: str, out_path: str) -> N
     print(f"[CSV] Generated {out_path} ({len(rows)} rows).")
 
 
-def generate_esc50_flat_csv(meta_csv: str, audio_root: str, out_path: str) -> None:
-    """Re-format the ESC-50 meta CSV to (filename, category) expected by our parser."""
+def generate_esc50_flat_csv(
+        meta_csv: str, audio_root: str, out_path: str) -> None:
+    """Re-format ESC-50 meta CSV to (filename, category) for our parser."""
     if os.path.exists(out_path):
         print(f"[CSV] {out_path} already exists — skipping generation.")
         return
@@ -173,14 +177,22 @@ def showcase_datasets() -> None:
     ds_esc50 = AudioDataset(ROOT_ESC50, lazy=True, labels_file=CSV_ESC50_FLAT)
     print(f"  Size : {len(ds_esc50)}")
     (y, sr), category = ds_esc50[0]
-    print(f"  ds[0]: duration={librosa.get_duration(y=y, sr=sr):.1f}s  sr={sr}  category='{category}'")
+    print(
+        f"  ds[0]: duration={
+            librosa.get_duration(
+                y=y,
+                sr=sr):.1f}s  sr={sr}  category='{category}'")
 
     # --- 1f. Labeled audio, folder mode, classification ---------------------
     print("\n[Audio] BallroomData — labeled, folder hierarchy, lazy")
     ds_ballroom = AudioDataset(ROOT_BALLROOM, lazy=True)
     print(f"  Size : {len(ds_ballroom)}")
     (y_b, sr_b), genre = ds_ballroom[0]
-    print(f"  ds[0]: duration={librosa.get_duration(y=y_b, sr=sr_b):.1f}s  genre='{genre}'")
+    print(
+        f"  ds[0]: duration={
+            librosa.get_duration(
+                y=y_b,
+                sr=sr_b):.1f}s  genre='{genre}'")
     train_b, test_b = ds_ballroom.split(0.8)
     print(f"  Split 80/20 -> train={len(train_b)}  test={len(test_b)}")
 
@@ -189,7 +201,11 @@ def showcase_datasets() -> None:
     ds_bpm = AudioDataset(ROOT_WALTZ, lazy=True, labels_file=CSV_BPM)
     print(f"  Size : {len(ds_bpm)}")
     (y_w, sr_w), bpm = ds_bpm[0]
-    print(f"  ds[0]: duration={librosa.get_duration(y=y_w, sr=sr_w):.1f}s  BPM={bpm}")
+    print(
+        f"  ds[0]: duration={
+            librosa.get_duration(
+                y=y_w,
+                sr=sr_w):.1f}s  BPM={bpm}")
 
     # --- 1h. Unlabeled audio ------------------------------------------------
     print("\n[Audio] BallroomData/Waltz — unlabeled, lazy")
@@ -238,15 +254,27 @@ def showcase_batchloader(ds_img: ImageDataset, ds_audio: AudioDataset) -> None:
     # --- Audio BatchLoader --------------------------------------------------
     print("\n[Audio] Sequential, batch_size=8, drop_last=False")
     ds_esc = AudioDataset(ROOT_ESC50, lazy=True, labels_file=CSV_ESC50_FLAT)
-    bl_audio = BatchLoader(ds_esc, batch_size=8, shuffle=False, drop_last=False)
+    bl_audio = BatchLoader(
+        ds_esc,
+        batch_size=8,
+        shuffle=False,
+        drop_last=False)
     print(f"  Number of batches : {len(bl_audio)}")
     audio_batch = next(iter(bl_audio))
     print(f"  First batch size  : {len(audio_batch)}")
     (y0, sr0), cat0 = audio_batch[0]
-    print(f"  First item        : duration={librosa.get_duration(y=y0, sr=sr0):.1f}s  cat='{cat0}'")
+    print(
+        f"  First item        : duration={
+            librosa.get_duration(
+                y=y0,
+                sr=sr0):.1f}s  cat='{cat0}'")
 
     print("\n[Audio] Random, batch_size=8, drop_last=True")
-    bl_audio_rand = BatchLoader(ds_esc, batch_size=8, shuffle=True, drop_last=True)
+    bl_audio_rand = BatchLoader(
+        ds_esc,
+        batch_size=8,
+        shuffle=True,
+        drop_last=True)
     print(f"  Number of batches : {len(bl_audio_rand)}")
 
 
@@ -254,7 +282,8 @@ def showcase_batchloader(ds_img: ImageDataset, ds_audio: AudioDataset) -> None:
 # 4.  Preprocessing pipeline showcase
 # ---------------------------------------------------------------------------
 
-def showcase_preprocessing(ds_img: ImageDataset, ds_audio: AudioDataset) -> None:
+def showcase_preprocessing(ds_img: ImageDataset,
+                           ds_audio: AudioDataset) -> None:
     print("\n" + "=" * 60)
     print("SECTION 3 — Preprocessing Pipelines")
     print("=" * 60)
@@ -266,7 +295,8 @@ def showcase_preprocessing(ds_img: ImageDataset, ds_audio: AudioDataset) -> None
         Padding(height=300, width=300, color=(128, 128, 128)),
     )
 
-    print("\n[Image pipeline] CenterCrop(256,256) -> RandomFlip(0.5) -> Padding(300,300)")
+    print("\n[Image pipeline] CenterCrop(256,256) -> RandomFlip(0.5)"
+          " -> Padding(300,300)")
     print("  Applied to 5 dataset samples:")
     fig, axes = plt.subplots(2, 5, figsize=(16, 7))
     for i in range(5):
@@ -278,7 +308,8 @@ def showcase_preprocessing(ds_img: ImageDataset, ds_audio: AudioDataset) -> None
         axes[1, i].imshow(processed)
         axes[1, i].set_title(f"proc {processed.shape[:2]}", fontsize=8)
         axes[1, i].axis("off")
-        print(f"    sample {i}: {raw_img.shape} -> {processed.shape}  label='{lbl}'")
+        print(f"    sample {i}: {raw_img.shape} -> "
+              f"{processed.shape}  label='{lbl}'")
     fig.suptitle("Image pipeline: CenterCrop -> RandomFlip -> Padding")
     plt.tight_layout()
     plt.savefig("sample_preprocessing_images.png", dpi=100)
@@ -301,7 +332,8 @@ def showcase_preprocessing(ds_img: ImageDataset, ds_audio: AudioDataset) -> None
         MelSpectrogram(n_mels=128, n_fft=2048, hop_length=512),
     )
 
-    print("\n[Audio pipeline] AudioRandomCrop(3s) -> Resample(22050) -> MelSpectrogram(128)")
+    print("\n[Audio pipeline] AudioRandomCrop(3s) -> Resample(22050)"
+          " -> MelSpectrogram(128)")
     print("  Applied to 5 dataset samples:")
     fig, axes = plt.subplots(1, 5, figsize=(18, 4))
     for i in range(5):
@@ -313,7 +345,9 @@ def showcase_preprocessing(ds_img: ImageDataset, ds_audio: AudioDataset) -> None
         )
         axes[i].set_title(f"'{cat}'", fontsize=8)
         axes[i].axis("off")
-        print(f"    sample {i}: dur={librosa.get_duration(y=y, sr=sr):.1f}s -> spec{spec.shape}  cat='{cat}'")
+        dur = librosa.get_duration(y=y, sr=sr)
+        print(f"    sample {i}: dur={dur:.1f}s"
+              f" -> spec{spec.shape}  cat='{cat}'")
     fig.suptitle("Audio pipeline: RandomCrop -> Resample -> MelSpectrogram")
     plt.tight_layout()
     plt.savefig("sample_preprocessing_audio.png", dpi=100)
@@ -321,12 +355,18 @@ def showcase_preprocessing(ds_img: ImageDataset, ds_audio: AudioDataset) -> None
     plt.close()
 
     print("\n  Applied through a BatchLoader (first batch):")
-    bl_audio = BatchLoader(ds_audio, batch_size=4, shuffle=True, drop_last=False)
+    bl_audio = BatchLoader(
+        ds_audio,
+        batch_size=4,
+        shuffle=True,
+        drop_last=False)
     for batch in bl_audio:
         for item in batch:
             (y, sr), cat = item
             spec = audio_pipeline((y, sr))
-            print(f"    dur={librosa.get_duration(y=y, sr=sr):.1f}s -> spec{spec.shape}  cat='{cat}'")
+            dur = librosa.get_duration(y=y, sr=sr)
+            print(f"    dur={dur:.1f}s"
+                  f" -> spec{spec.shape}  cat='{cat}'")
         break
 
     # --- Standalone: PitchShift only ----------------------------------------
